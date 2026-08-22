@@ -1,0 +1,7 @@
+{
+  "$schema": "https://baditaflorin.github.io/mesh-common/mesh-service.schema.json",
+  "id": "mesh-agenda-runner",
+  "category": "Productivity",
+  "subcategory": "Coordination & planning",
+  "useCases": ["meetings", "facilitation", "planning"]
+}
