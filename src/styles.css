@@ -1,6 +1,3 @@
-/* App-local styles. Mesh chrome (settings drawer, self-ref bar) is provided by
- * @baditaflorin/mesh-common/styles.css imported in main.tsx. */
-
 :root {
   color-scheme: dark;
 }
@@ -12,40 +9,785 @@
 html,
 body,
 #root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
   width: 100%;
-  background: var(--mesh-bg);
-  color: var(--mesh-fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  min-height: 100%;
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at 16% -12%,
+      color-mix(in srgb, var(--mesh-accent) 18%, transparent),
+      transparent 29rem
+    ),
+    var(--mesh-canvas, #10151d);
+  color: var(--mesh-fg, #f1f5f9);
+  font-family: var(--mesh-font-sans, ui-sans-serif, system-ui, sans-serif);
   -webkit-tap-highlight-color: transparent;
 }
 
-.feature-placeholder {
-  padding: 6rem 1.5rem 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+button,
+input {
+  font: inherit;
 }
 
-.feature-placeholder h1 {
-  font-size: 1.6rem;
+button {
+  -webkit-touch-callout: none;
+}
+
+.agenda-page {
+  width: min(1240px, calc(100% - 2rem));
+  min-height: 100%;
+  margin: 0 auto;
+  padding: clamp(0.55rem, 1.2vw, 1rem) 0 clamp(2.75rem, 6vw, 5rem);
+}
+
+.agenda-command {
+  display: grid;
+  grid-template-columns: minmax(11.5rem, 0.76fr) minmax(19rem, 1.08fr) minmax(18rem, 0.98fr);
+  align-items: stretch;
+  gap: clamp(0.7rem, 1.45vw, 1.15rem);
+}
+
+.agenda-intro {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(0.75rem, 1.4vw, 1.25rem) clamp(0.25rem, 0.7vw, 0.7rem);
+}
+
+.agenda-intro::before {
+  position: absolute;
+  top: clamp(0.75rem, 1.4vw, 1.25rem);
+  bottom: clamp(0.75rem, 1.4vw, 1.25rem);
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--mesh-accent), transparent 94%);
+  content: "";
+}
+
+.agenda-kicker {
   margin: 0;
   color: var(--mesh-accent);
+  font-size: 0.67rem;
+  font-weight: 790;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-transform: uppercase;
 }
 
-.feature-placeholder p {
-  max-width: 32rem;
+.agenda-intro h1 {
+  max-width: 7.8ch;
+  margin: 0.45rem 0 0;
+  color: var(--mesh-fg);
+  font-size: clamp(2.65rem, 4.45vw, 4.6rem);
+  font-weight: 750;
+  letter-spacing: -0.076em;
+  line-height: 0.88;
+}
+
+.agenda-intro-copy {
+  max-width: 30rem;
+  margin: 1rem 0 0;
+  color: var(--mesh-muted);
+  font-size: clamp(0.9rem, 1.22vw, 1.02rem);
+  line-height: 1.53;
+}
+
+.agenda-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  margin-top: 1rem;
+}
+
+.agenda-signals .mesh-presence,
+.agenda-signals .mesh-status-pill {
+  border-color: color-mix(in srgb, var(--mesh-border) 76%, var(--mesh-accent));
+  background: color-mix(in srgb, var(--mesh-surface) 78%, transparent);
+}
+
+.agenda-room-note {
+  max-width: 26rem;
+  margin: 0.8rem 0 0;
+  color: color-mix(in srgb, var(--mesh-muted) 88%, var(--mesh-fg));
+  font-size: 0.78rem;
+  line-height: 1.48;
+}
+
+.agenda-stage,
+.agenda-composer,
+.agenda-plan {
+  min-width: 0;
+  border-radius: 1.2rem;
+}
+
+.agenda-stage {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--mesh-accent) 48%, var(--mesh-border));
+  background:
+    linear-gradient(
+      146deg,
+      color-mix(in srgb, var(--mesh-accent) 19%, var(--mesh-surface-raised)),
+      var(--mesh-surface)
+    ),
+    var(--mesh-surface);
+  box-shadow: none;
+}
+
+.agenda-stage::after {
+  position: absolute;
+  right: -3.6rem;
+  bottom: -4.6rem;
+  width: 12rem;
+  height: 12rem;
+  border: 1px solid color-mix(in srgb, var(--mesh-accent) 38%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.8rem color-mix(in srgb, var(--mesh-accent) 8%, transparent),
+    0 0 0 3.6rem color-mix(in srgb, var(--mesh-accent) 5%, transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.agenda-stage-topline,
+.agenda-surface-heading,
+.agenda-now-heading,
+.agenda-plan-heading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.agenda-step-count,
+.agenda-total {
+  flex: 0 0 auto;
+  color: var(--mesh-muted);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.agenda-now {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.25rem, 3.2vh, 2.5rem) 0 clamp(0.2rem, 0.8vh, 0.65rem);
+}
+
+.agenda-now-heading > div {
+  min-width: 0;
+}
+
+.agenda-step-label {
   margin: 0;
-  opacity: 0.85;
+  color: var(--mesh-accent);
+  font-size: 0.72rem;
+  font-weight: 730;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.agenda-now h2,
+.agenda-surface-heading h2 {
+  margin: 0.34rem 0 0;
+  color: var(--mesh-fg);
+  letter-spacing: -0.052em;
+}
+
+.agenda-now h2 {
+  max-width: 10ch;
+  font-size: clamp(2rem, 3.4vw, 3.35rem);
+  font-weight: 740;
+  line-height: 0.94;
+  overflow-wrap: anywhere;
+}
+
+.agenda-duration {
+  display: grid;
+  width: 4.4rem;
+  min-height: 4.4rem;
+  flex: 0 0 auto;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid color-mix(in srgb, var(--mesh-accent) 55%, var(--mesh-border));
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--mesh-canvas) 56%, var(--mesh-accent));
+  color: var(--mesh-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda-duration strong {
+  font-size: 1.42rem;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.agenda-duration span {
+  margin-top: 0.18rem;
+  color: var(--mesh-muted);
+  font-size: 0.66rem;
+  font-weight: 740;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.agenda-now-copy {
+  max-width: 31rem;
+  margin: 1rem 0 0;
+  color: var(--mesh-muted);
+  font-size: 0.9rem;
+  line-height: 1.48;
+}
+
+.agenda-progress-wrap {
+  max-width: 28rem;
+  margin-top: 1.15rem;
+}
+
+.agenda-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--mesh-muted);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda-progress {
+  width: 100%;
+  height: 0.4rem;
+  margin-top: 0.4rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mesh-border) 78%, transparent);
+  accent-color: var(--mesh-accent);
+}
+
+.agenda-progress::-webkit-progress-bar {
+  background: color-mix(in srgb, var(--mesh-border) 78%, transparent);
+}
+
+.agenda-progress::-webkit-progress-value {
+  border-radius: 999px;
+  background: var(--mesh-accent);
+}
+
+.agenda-progress::-moz-progress-bar {
+  border-radius: 999px;
+  background: var(--mesh-accent);
+}
+
+.agenda-stage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.1rem;
+}
+
+.agenda-stage-actions .mesh-button-quiet {
+  color: var(--mesh-muted);
+}
+
+.agenda-now-empty {
+  max-width: 27rem;
+}
+
+.agenda-now-empty h2 {
+  max-width: 12ch;
+  margin-top: 0.72rem;
+}
+
+.agenda-now-empty > p {
+  max-width: 31rem;
+  margin: 0.9rem 0 1.1rem;
+  color: var(--mesh-muted);
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.feature-status {
-  font-size: 0.85rem;
-  opacity: 0.6;
+.agenda-empty-mark {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--mesh-accent) 50%, var(--mesh-border));
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--mesh-canvas) 64%, var(--mesh-accent));
+  color: var(--mesh-fg);
+  font-size: 1rem;
+  font-weight: 760;
+}
+
+.agenda-right-rail {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  gap: clamp(0.7rem, 1.2vw, 0.9rem);
+}
+
+.agenda-composer {
+  border-color: color-mix(in srgb, var(--mesh-border) 70%, var(--mesh-accent));
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--mesh-surface-raised) 94%, var(--mesh-accent)),
+    var(--mesh-surface-raised)
+  );
+  box-shadow: none;
+}
+
+.agenda-surface-heading > div {
+  min-width: 0;
+}
+
+.agenda-surface-heading h2 {
+  font-size: clamp(1.18rem, 1.9vw, 1.43rem);
+  font-weight: 730;
+  line-height: 1;
+}
+
+.agenda-surface-heading .mesh-status-pill {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.agenda-form {
+  display: grid;
+  gap: 0.58rem;
+  margin-top: 0.95rem;
+}
+
+.agenda-form > label,
+.agenda-form legend {
+  color: var(--mesh-muted);
+  font-size: 0.76rem;
+  font-weight: 720;
+}
+
+.agenda-form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.66rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--mesh-border) 72%, var(--mesh-accent));
+  border-radius: 0.72rem;
+  outline: none;
+  background: color-mix(in srgb, var(--mesh-canvas) 88%, #000);
+  color: var(--mesh-fg);
+  font-size: 0.92rem;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.agenda-form input::placeholder {
+  color: color-mix(in srgb, var(--mesh-muted) 77%, transparent);
+}
+
+.agenda-form input:focus {
+  border-color: var(--mesh-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mesh-accent) 22%, transparent);
+}
+
+.agenda-form fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.agenda-form legend {
+  margin-bottom: 0.4rem;
+}
+
+.agenda-duration-options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.agenda-duration-options button {
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0.36rem;
+  border: 1px solid var(--mesh-border);
+  border-radius: 0.62rem;
+  outline: none;
+  background: color-mix(in srgb, var(--mesh-canvas) 60%, var(--mesh-surface));
+  color: var(--mesh-muted);
+  cursor: pointer;
+  font-size: 0.77rem;
+  font-weight: 720;
   font-variant-numeric: tabular-nums;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+}
+
+.agenda-duration-options button:hover,
+.agenda-duration-options button:focus-visible {
+  border-color: var(--mesh-accent);
+  color: var(--mesh-fg);
+}
+
+.agenda-duration-options button.is-selected {
+  border-color: var(--mesh-accent);
+  background: color-mix(in srgb, var(--mesh-accent) 23%, var(--mesh-surface-raised));
+  color: var(--mesh-fg);
+}
+
+.agenda-plan {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  border-color: color-mix(in srgb, var(--mesh-border) 86%, var(--mesh-accent));
+  background: color-mix(in srgb, var(--mesh-surface) 72%, transparent);
+  box-shadow: none;
+}
+
+.agenda-plan-heading {
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--mesh-border) 82%, transparent);
+}
+
+.agenda-total {
+  display: grid;
+  width: 2.6rem;
+  height: 2.2rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--mesh-accent) 43%, var(--mesh-border));
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, var(--mesh-canvas) 58%, var(--mesh-accent));
+  color: var(--mesh-fg);
+  font-weight: 740;
+}
+
+.agenda-list {
+  display: grid;
+  min-height: 0;
+  gap: 0.36rem;
+  margin: 0.75rem -0.15rem -0.15rem 0;
+  padding: 0 0.15rem 0 0;
+  overflow: auto;
+  list-style: none;
+  overscroll-behavior: contain;
+  scrollbar-color: color-mix(in srgb, var(--mesh-accent) 50%, var(--mesh-border)) transparent;
+}
+
+.agenda-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-width: 0;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.16rem;
+  border: 1px solid color-mix(in srgb, var(--mesh-border) 88%, var(--mesh-accent));
+  border-radius: 0.74rem;
+  background: color-mix(in srgb, var(--mesh-canvas) 55%, var(--mesh-surface));
+}
+
+.agenda-list li[data-current] {
+  border-color: color-mix(in srgb, var(--mesh-accent) 66%, var(--mesh-border));
+  background: color-mix(in srgb, var(--mesh-accent) 12%, var(--mesh-surface-raised));
+  box-shadow: inset 2px 0 0 var(--mesh-accent);
+}
+
+.agenda-item-select {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.22rem 0.42rem 0.38rem;
+  border: 0;
+  border-radius: 0.56rem;
+  outline: none;
+  background: transparent;
+  color: var(--mesh-fg);
+  cursor: pointer;
+  text-align: left;
+}
+
+.agenda-item-select:hover,
+.agenda-item-select:focus-visible {
+  background: color-mix(in srgb, var(--mesh-accent) 10%, transparent);
+}
+
+.agenda-item-index,
+.agenda-item-duration {
+  color: var(--mesh-muted);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.agenda-item-index {
+  color: var(--mesh-accent);
+  font-weight: 760;
+}
+
+.agenda-item-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--mesh-fg);
+  font-size: 0.84rem;
+  font-weight: 680;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agenda-item-remove {
+  min-height: 2rem;
+  padding: 0.35rem 0.44rem;
+  border: 0;
+  border-radius: 0.5rem;
+  outline: none;
+  background: transparent;
+  color: var(--mesh-muted);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 690;
+}
+
+.agenda-item-remove:hover,
+.agenda-item-remove:focus-visible {
+  background: color-mix(in srgb, var(--mesh-danger) 16%, transparent);
+  color: var(--mesh-danger);
+}
+
+.agenda-plan-empty {
+  margin: auto 0;
+  padding: 1rem 0 0.15rem;
+  color: var(--mesh-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.agenda-plan-empty p {
+  margin: 0;
+  color: var(--mesh-fg);
+  font-weight: 680;
+}
+
+.agenda-plan-empty span {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+@media (min-width: 50.0625rem) and (max-height: 44rem) {
+  .agenda-page {
+    display: flex;
+    align-items: stretch;
+    padding-top: 0.4rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .agenda-command {
+    width: 100%;
+    min-height: 0;
+  }
+
+  .agenda-intro h1 {
+    font-size: clamp(2.45rem, 4vw, 3.75rem);
+  }
+
+  .agenda-intro-copy {
+    margin-top: 0.72rem;
+    font-size: 0.88rem;
+  }
+
+  .agenda-signals {
+    margin-top: 0.72rem;
+  }
+
+  .agenda-room-note {
+    margin-top: 0.58rem;
+  }
+
+  .agenda-stage {
+    min-height: 0;
+  }
+
+  .agenda-now {
+    padding-top: 0.8rem;
+  }
+
+  .agenda-now h2 {
+    font-size: clamp(1.82rem, 3vw, 2.7rem);
+  }
+
+  .agenda-now-copy {
+    margin-top: 0.72rem;
+  }
+
+  .agenda-progress-wrap,
+  .agenda-stage-actions {
+    margin-top: 0.75rem;
+  }
+
+  .agenda-composer,
+  .agenda-plan {
+    border-radius: 1rem;
+  }
+
+  .agenda-composer {
+    padding: 0.86rem;
+  }
+
+  .agenda-plan {
+    padding: 0.86rem;
+  }
+
+  .agenda-form {
+    gap: 0.42rem;
+    margin-top: 0.65rem;
+  }
+}
+
+@media (max-width: 50rem) {
+  .agenda-command {
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.95fr);
+  }
+
+  .agenda-intro {
+    grid-column: 1 / -1;
+    padding-bottom: 0.1rem;
+  }
+
+  .agenda-intro h1 {
+    max-width: none;
+  }
+}
+
+@media (max-width: 42rem) {
+  .agenda-page {
+    width: min(100% - 1rem, 38rem);
+    padding-top: 0.3rem;
+  }
+
+  .agenda-command {
+    display: flex;
+    flex-direction: column;
+    gap: 0.72rem;
+  }
+
+  .agenda-intro {
+    padding: 0.42rem 0.16rem 0.05rem 0.68rem;
+  }
+
+  .agenda-intro::before {
+    top: 0.42rem;
+    bottom: 0.05rem;
+  }
+
+  .agenda-intro h1 {
+    max-width: 9.5ch;
+    font-size: clamp(2.28rem, 10vw, 3.1rem);
+  }
+
+  .agenda-intro-copy {
+    margin-top: 0.72rem;
+    font-size: 0.9rem;
+  }
+
+  .agenda-signals {
+    margin-top: 0.75rem;
+  }
+
+  .agenda-room-note {
+    display: none;
+  }
+
+  .agenda-stage,
+  .agenda-composer,
+  .agenda-plan {
+    border-radius: 1rem;
+  }
+
+  .agenda-stage {
+    min-height: 20.4rem;
+  }
+
+  .agenda-now {
+    padding-top: 1.1rem;
+  }
+
+  .agenda-now h2 {
+    font-size: clamp(2rem, 9vw, 2.7rem);
+  }
+
+  .agenda-now-copy {
+    margin-top: 0.75rem;
+  }
+
+  .agenda-progress-wrap {
+    margin-top: 0.85rem;
+  }
+
+  .agenda-stage-actions {
+    margin-top: 0.88rem;
+  }
+
+  .agenda-stage-actions .mesh-button-lg:first-child {
+    width: 100%;
+  }
+
+  .agenda-right-rail {
+    gap: 0.72rem;
+  }
+
+  .agenda-plan {
+    min-height: 16rem;
+  }
+}
+
+@media (max-width: 25rem) {
+  .agenda-page {
+    width: min(100% - 0.75rem, 38rem);
+  }
+
+  .agenda-stage,
+  .agenda-composer,
+  .agenda-plan {
+    padding: 0.9rem;
+  }
+
+  .agenda-now-heading {
+    gap: 0.45rem;
+  }
+
+  .agenda-duration {
+    width: 3.8rem;
+    min-height: 3.8rem;
+  }
+
+  .agenda-duration-options {
+    gap: 0.22rem;
+  }
+
+  .agenda-duration-options button {
+    font-size: 0.71rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agenda-form input,
+  .agenda-duration-options button {
+    transition: none;
+  }
 }

@@ -13,6 +13,11 @@ export default defineConfig({
   timeout: 30_000,
   expect: { timeout: 5_000 },
   fullyParallel: false,
+  // WebRTC's BroadcastChannel fallback is intentionally exercised by the
+  // two-peer suite. Serial workers keep that shared-browser transport
+  // deterministic both locally and on Woodpecker, whose workers do not set
+  // a universal `CI` environment variable.
+  workers: 1,
   reporter: process.env["CI"] ? "list" : [["list"], ["json", { outputFile: "test-results.json" }]],
   use: {
     baseURL,

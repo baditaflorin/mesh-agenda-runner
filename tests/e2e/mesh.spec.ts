@@ -8,23 +8,29 @@ const pkg = JSON.parse(readFileSync(new URL("../../package.json", import.meta.ur
 const storagePrefix = pkg.name;
 
 /**
- * Generic mesh-presence test — works for any mesh-* app without modification.
- * Opens two pages in the same browser context so y-webrtc's BroadcastChannel
- * fallback syncs them with no signaling server / no network.
- *
- * Apps that show a peer count in the UI should pass this. Apps that don't
- * surface peer count can override or skip this test.
+ * Agenda Runner's product promise is not merely that two pages mount. A beat
+ * written by one facilitator and the shared current marker selected by a
+ * second facilitator must converge without a server.
  */
-test("two peers in the same room can both load", async ({ browser, baseURL }) => {
+test("two peers share agenda beats and the current focus", async ({ browser, baseURL }) => {
   const { a, b, cleanup } = await openTwoPeers(browser, baseURL ?? "", { storagePrefix });
   try {
-    await expect(a.locator(".mesh-self-ref, .self-ref").first()).toBeVisible();
-    await expect(b.locator(".mesh-self-ref, .self-ref").first()).toBeVisible();
-    // Both should reach a non-loading state within the timeout — most apps
-    // either show a count, a heading, or a primary control. We assert that
-    // at least one <h1> is present on both pages.
-    await expect(a.getByRole("heading", { level: 1 }).first()).toBeVisible();
-    await expect(b.getByRole("heading", { level: 1 }).first()).toBeVisible();
+    await expect(a.getByRole("heading", { level: 1, name: "Keep the room moving." })).toBeVisible();
+    await expect(b.getByRole("heading", { level: 1, name: "Keep the room moving." })).toBeVisible();
+
+    const title = "Confirm release scope";
+    await expect(a.getByText("Agenda shared live")).toBeVisible();
+    await a.getByPlaceholder("e.g. Align on launch decisions").fill(title);
+    await expect(a.getByRole("button", { name: "Add to agenda" })).toBeEnabled();
+    await a.getByRole("button", { name: "15m" }).click();
+    await a.getByRole("button", { name: "Add to agenda" }).click();
+
+    await expect(b.getByText(title, { exact: true })).toBeVisible();
+    await b.getByRole("button", { name: `Make ${title} the current item` }).click();
+    await expect(
+      a.getByTestId("active-agenda").getByRole("heading", { name: title }),
+    ).toBeVisible();
+    await expect(a.getByRole("progressbar")).toHaveAttribute("value", "1");
   } finally {
     await cleanup();
   }
