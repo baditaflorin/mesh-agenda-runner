@@ -1,94 +1,89 @@
-# **APP_NAME**
+# Agenda Runner
 
-[![pages](https://img.shields.io/badge/live-baditaflorin.github.io%2F__APP_NAME__-__ACCENT_NOHASH__)](https://baditaflorin.github.io/__APP_NAME__/)
-[![version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/baditaflorin/__APP_NAME__/blob/main/package.json)
-[![license](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
+[![live](https://img.shields.io/badge/live-open%20the%20app-7ea5ff)](https://baditaflorin.github.io/mesh-agenda-runner/)
+[![source](https://img.shields.io/badge/source-GitHub-202936)](https://github.com/baditaflorin/mesh-agenda-runner)
 
-> **DESCRIPTION**
+> A live, peer-to-peer run of show for the moments that make a session move.
 
-**Live → https://baditaflorin.github.io/__APP_NAME__/**
+**Live → [baditaflorin.github.io/mesh-agenda-runner](https://baditaflorin.github.io/mesh-agenda-runner/)**
 
-**Source → https://github.com/baditaflorin/__APP_NAME__**
+Agenda Runner gives a room one shared plan and one shared **Now** state. Add a beat,
+give it the time it deserves, choose it as the current focus, and everyone in the
+same room sees the change immediately. There is no facilitator account or central
+agenda service in the product path.
 
-**Tip the dev (buy a coffee) → https://www.paypal.com/paypalme/florinbadita**
+![Agenda Runner with an active shared beat](docs/screenshot.png)
 
----
+## A two-person session
 
-![screenshot](docs/screenshot.png)
+1. Open the app on two devices and make sure both use the same room in Settings.
+2. On either device, add a beat such as “Align on release decisions”.
+3. On either device, select that beat or press **Start the agenda**.
+4. Advance when the room is ready. The focus marker and agenda list converge over
+   the shared Yjs room.
 
-> Two peers, side-by-side, in the same room. Drop a `tests/demo/scenario.mjs`
-> exporting `default async (a, b) => …` and run `npm run demo` to regenerate
-> `docs/preview.png` plus `docs/demo-a.webm` / `docs/demo-b.webm` clips.
+![Two peers creating and running one agenda](docs/preview.png)
 
-![preview](docs/preview.png)
+The short recording below is generated from a deterministic two-peer scenario:
 
-## What it is
+![Two peers use Agenda Runner](docs/demo.gif)
 
-A **rootless-computing** peer-to-peer browser app. No backend of its own beyond the self-hosted WebRTC stack listed below. State lives in a Yjs mesh shared by everyone in the same room.
+## What is shared
 
-Read the principles → **https://baditaflorin.github.io/rootless-computing/principles.html**
+- Agenda item title and allotted minutes
+- The ordered run of show
+- The currently focused item
 
-## Quickstart
+Your room URL is the practical access boundary. Anyone who joins it can read,
+add, select, or remove agenda items. Use a fresh room for a private session and
+share the invite deliberately.
 
-Open the live URL on two devices in the same room (set in ⚙ settings, or scan the room QR). Everything else is in-app.
+## Local development
 
-For local hacking:
+`mesh-common` is a sibling package because this app consumes the shared primitives
+directly.
 
 ```bash
 git clone https://github.com/baditaflorin/mesh-common
-git clone https://github.com/baditaflorin/__APP_NAME__
-cd __APP_NAME__
-npm install
+git clone https://github.com/baditaflorin/mesh-agenda-runner
+cd mesh-agenda-runner
+npm ci --prefix ../mesh-common
+npm ci
 npm run dev
 ```
 
-`mesh-common` must sit as a **sibling** directory because `package.json` references it via `file:../mesh-common`.
+The repository’s deployment branch is `codex/initial-service` (not `main`), and
+GitHub Pages serves its committed `docs/` directory. There are no GitHub Actions
+workflows; Woodpecker is the server-side release gate.
 
-## Self-hosted infrastructure
-
-| Repo                                              | Endpoint                               | Purpose                     |
-| ------------------------------------------------- | -------------------------------------- | --------------------------- |
-| https://github.com/baditaflorin/signaling-server  | `wss://turn.0docker.com/ws`            | y-webrtc signaling fan-out  |
-| https://github.com/baditaflorin/turn-token-server | `https://turn.0docker.com/credentials` | HMAC TURN creds, 1-hour TTL |
-| https://github.com/baditaflorin/coturn-hetzner    | `turn:turn.0docker.com:3479`           | TURN relay                  |
-
-## Settings overrides
-
-The settings drawer lets the user override signaling and TURN endpoints. localStorage keys:
-
-- `__APP_NAME__:signalingUrl`
-- `__APP_NAME__:turnTokenUrl`
-- `__APP_NAME__:iceServers`
-- `__APP_NAME__:room`
-
-If endpoints are blank or unreachable, the app falls back to STUN-only.
-
-## Version + commit on every screen
-
-The bottom-right footer on every screen of the live app shows:
-
-- `source` → this repo
-- `tip ♥` → PayPal
-- `vX.Y.Z · <short-sha>` — version from `package.json` plus the build-time git commit
-
-## Build & deploy
-
-GitHub Pages serves the committed `docs/` directory on the `main` branch. There is no GitHub Actions build workflow; local Husky-style hooks gate formatting / typecheck / smoke build before each push.
+## Verification
 
 ```bash
-npm run smoke                                    # build + sanity-check docs/
-bash ../mesh-common/scripts/screenshot-app.sh    # regenerate docs/screenshot.png
+npm run fmt:check
+npm run typecheck
+npm run test:unit
+npm run smoke
+npm run test:e2e
+MESH_LEAK_DURATION_MS=5000 MESH_LEAK_NOISE_OPS=20 npm run test:leak
+npm run audit:security
+npm audit --audit-level=high
 ```
 
-## Privacy
+To refresh the public assets after a visual change:
 
-<!-- mesh:privacy-section:start -->
+```bash
+npm run screenshot
+npm run demo
+```
 
-Everything you publish to a room is visible to every peer in that room. Your local device's name, key, and choices stay local. Cryptographic signatures prove **who** wrote each entry; they do **not** prevent peers from reading or copying entries. The room URL is the access control — share it deliberately.
+## Infrastructure and privacy
 
-See `docs/privacy.md` for the full threat model — capabilities used, what other peers in the mesh see, what the self-hosted infra sees, what stays local.
-<!-- mesh:privacy-section:end -->
+The app uses Mesh Common’s self-hosted WebRTC signaling and TURN infrastructure
+for peer discovery and connectivity. Data is replicated between the browsers in a
+room using Yjs; the app does not add an agenda database or product account layer.
+
+Read the complete threat model in [docs/privacy.md](docs/privacy.md).
 
 ## License
 
-MIT — see `LICENSE`.
+MIT — see [LICENSE](LICENSE).
