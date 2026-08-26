@@ -2,6 +2,7 @@ import { createMeshConfig } from "@baditaflorin/mesh-common";
 
 export const config = createMeshConfig({
   appName: "mesh-agenda-runner",
+  breadcrumbs: false,
   displayName: "Agenda Runner",
   visualProfile: "utility",
   shellLayout: "inset",
